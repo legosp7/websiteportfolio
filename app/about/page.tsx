@@ -1,4 +1,17 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
 
 export default function Page() {
     return (
@@ -9,22 +22,35 @@ export default function Page() {
         from the University of Arizona. I enjoy learning new things, from 3D modeling to web development, 
         and gaming with friends.
     </section>
-    
-    <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold tracking-tighter">Skills</h2>
-        <Tabs defaultValue="account" className="w-100">
-            <TabsList>
-                <TabsTrigger value="education">Education</TabsTrigger>
-                <TabsTrigger value="skills">Skills</TabsTrigger>
-            </TabsList>
-            <TabsContent value="education">
-                <h3>University of Arizona</h3>
-                <h4>Tucson, Arizona</h4>
-                <p>Bachelor of Science in Computer Science, May 2025</p>
-                <p>Minor in Information Science and Technology Arts</p>
-            </TabsContent>
-            <TabsContent value="skills">Change your password here.</TabsContent>
-        </Tabs> 
+    <Separator />
+    <section className="mb-8 mt-8">
+        <h1 className="mb-4 text-xl font-semibold tracking-tighter">Skills</h1>
+        <Tabs defaultValue="Languages" className="w-full">
+        <TabsList className="bg-transparent border-b-2 mb-4">
+            <TabsTrigger value="Languages">Languages</TabsTrigger>
+            <TabsTrigger value="Technologies">Frameworks</TabsTrigger>
+            <TabsTrigger value="Courses Taken">Tools</TabsTrigger>
+        </TabsList>
+        <TabsContent value="Languages">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Languages</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <CardDescription>
+                        <ul>
+                            <li>Python</li>
+                            <li>Java</li>
+                            <li>JavaScript</li>
+                            <li>TypeScript</li>
+                            <li>C++</li>
+                        </ul>
+                    </CardDescription>
+                </CardContent>
+            </Card>
+        </TabsContent>
+        </Tabs>
+        
     </section>
     </div>
     )
