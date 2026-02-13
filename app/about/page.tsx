@@ -1,17 +1,21 @@
 import { Separator } from "@/components/ui/separator"
+import Image from "next/image"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemGroup,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
+
+//gonna be using items here
+const skills = [
+    {
+        name: "Python",
+        image: "/skills/python.svg",
+    },
+]
 
 export default function Page() {
     return (
@@ -25,32 +29,26 @@ export default function Page() {
     <Separator />
     <section className="mb-8 mt-8">
         <h1 className="mb-4 text-xl font-semibold tracking-tighter">Skills</h1>
-        <Tabs defaultValue="Languages" className="w-full">
-        <TabsList className="bg-transparent border-b-2 mb-4">
-            <TabsTrigger value="Languages">Languages</TabsTrigger>
-            <TabsTrigger value="Technologies">Frameworks</TabsTrigger>
-            <TabsTrigger value="Courses Taken">Tools</TabsTrigger>
-        </TabsList>
-        <TabsContent value="Languages">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Languages</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <CardDescription>
-                        <ul>
-                            <li>Python</li>
-                            <li>Java</li>
-                            <li>JavaScript</li>
-                            <li>TypeScript</li>
-                            <li>C++</li>
-                        </ul>
-                    </CardDescription>
-                </CardContent>
-            </Card>
-        </TabsContent>
-        </Tabs>
         
+        <ItemGroup>
+            {skills.map((skill) => {
+                return (
+                    <Item key={skill.name}>
+                        <ItemMedia variant="image">
+                            <Image
+                                src={skill.image}
+                                alt={`${skill.name} logo`}
+                                width={32}
+                                height={32}
+                            />
+                        </ItemMedia>
+                        <ItemContent>
+                            <ItemTitle>{skill.name}</ItemTitle>
+                        </ItemContent>
+                    </Item>
+                )
+            })}
+        </ItemGroup>
     </section>
     </div>
     )
