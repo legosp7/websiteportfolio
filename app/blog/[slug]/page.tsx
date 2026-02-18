@@ -1,100 +1,63 @@
-import { notFound } from 'next/navigation'
-import { CustomMDX } from 'app/components/mdx'
-import { formatDate, getBlogPosts } from 'app/blog/utils'
-import { baseUrl } from 'app/sitemap'
+import { createClient } from "contentful";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import { BlogItem } from "../types";
+
+const client = createClient({
+  space: process.env.SPACE_ID!,
+  accessToken: process.env.ACCESS_TOKEN!
+});
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts()
+  const queryOptions = {
+    content_type: "blogPost",
+    select: "fields.slug",
+  };
 
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
+  const articles = await client.getEntries(queryOptions);
+
+  return articles.items.map((article) => ({
+    slug: article.fields.slug,
+  }));
 }
 
-export async function generateMetadata({ params }) {
-  const { slug } = await params
-  let post = getBlogPosts().find((post) => post.slug === slug)
-  if (!post) {
-    return
-  }
+const fetchBlogPost = async (slug: string): Promise<BlogItem> => {
+  const queryOptions = {
+    content_type: "blogPost",
+    "fields.slug[match]": slug,
+  };
 
-  let {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata
-  let ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+  const queryResult = await client.getEntries(queryOptions);
 
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      publishedTime,
-      url: `${baseUrl}/blog/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
-    },
-  }
-}
+  return queryResult.items[0] as unknown as BlogItem;
+};
 
-export default async function Blog({ params }) {
-  const { slug } = await params
-  let post = getBlogPosts().find((post) => post.slug === slug)
+/* src/app/blog/[slug]/page.tsx */ 
+type BlogPageProps = {
+  params: Promise<{ slug: string }>;
+};
 
-  if (!post) {
-    notFound()
-  }
+export default async function BlogPage({ params }: BlogPageProps) {
+ const { slug } = await params;
 
-  return (
-    <section>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
-            url: `${baseUrl}/blog/${post.slug}`,
-            author: {
-              '@type': 'Person',
-              name: 'My Portfolio',
-            },
-          }),
-        }}
-      />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
-        {post.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(post.metadata.publishedAt)}
+ const article = await fetchBlogPost(slug);
+ const { title, date, content } = article.fields;
+
+ return (
+   <main className="min-h-screen p-24 flex justify-center">
+     <div className="max-w-2xl">
+       <h1 className="font-extrabold text-3xl mb-2">{title}</h1>
+       <p className="mb-6 text-slate-400 ">
+          Posted on{" "}
+          {new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
-      </div>
-      <article className="prose">
-        <CustomMDX source={post.content} />
-      </article>
-    </section>
-  )
+        <div className="[&>p]:mb-8 [&>h2]:font-extrabold">
+          { documentToReactComponents(content) }
+        </div>
+     </div>
+   </main>
+ );
 }

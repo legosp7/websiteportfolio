@@ -10,7 +10,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "./ui/input-group"
+} from "./input-group"
 import { ChevronDownIcon, XIcon, CheckIcon } from "lucide-react"
 
 const Combobox = ComboboxPrimitive.Root
