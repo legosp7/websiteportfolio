@@ -1,0 +1,22 @@
+diff --git a/node_modules/axios/lib/adapters/http.js b/node_modules/axios/lib/adapters/http.js
+index 6a8a05d..9a6aedd 100644
+--- a/node_modules/axios/lib/adapters/http.js
++++ b/node_modules/axios/lib/adapters/http.js
+@@ -2,7 +2,7 @@ import utils from '../utils.js';
+ import settle from '../core/settle.js';
+ import buildFullPath from '../core/buildFullPath.js';
+ import buildURL from '../helpers/buildURL.js';
+-import proxyFromEnv from 'proxy-from-env';
++import { getProxyForUrl } from 'proxy-from-env';
+ import http from 'http';
+ import https from 'https';
+ import http2 from 'http2';
+@@ -180,7 +180,7 @@ function dispatchBeforeRedirect(options, responseDetails) {
+ function setProxy(options, configProxy, location) {
+   let proxy = configProxy;
+   if (!proxy && proxy !== false) {
+-    const proxyUrl = proxyFromEnv.getProxyForUrl(location);
++    const proxyUrl = getProxyForUrl(location);
+     if (proxyUrl) {
+       proxy = new URL(proxyUrl);
+     }
