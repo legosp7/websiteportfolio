@@ -43,7 +43,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
  const { title, date, content } = article.fields;
 
  return (
-   <main className="min-h-screen p-24 flex justify-center">
+   <main className="min-h-screen flex justify-left">
      <div className="max-w-2xl">
        <h1 className="font-extrabold text-3xl mb-2">{title}</h1>
        <p className="mb-6 text-slate-400 ">
