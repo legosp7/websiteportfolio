@@ -22,26 +22,31 @@ export default async function Page() {
   const blogEntries = await getBlogEntries();
 
   return (
-    <main className="flex min-h-screen flex-col p-24 gap-y-8">
+    <main>
+      <h1 className="font-semibold text-2xl mb-8 tracking-tighter">My Blog</h1>
+      <div className="flex flex-col space-y-1 mb-4">
       {blogEntries.items.map((singlePost) => {
         const { slug, title, date } = singlePost.fields;
 
         return (
           <div key={slug}>
-            <Link href={`/blog/${slug}`}>
-              <h2 className="font-extrabold text-xl">{title}</h2>
-              <span className="text-gray-500">
-                Posted on{" "}
-                {new Date(date).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
+            <Link className="flex flex-col space-y-1 mb-4" href={`/blog/${slug}`}>
+            <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
+              <p className="text-neutral-600 dark:text-neutral-400 w-auto tabular-nums">{new Date(date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+              </p>
+              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
+                {title}
+              </p>
+            </div>
             </Link>
           </div>
         );
       })}
+      </div>
     </main>
   );
 }

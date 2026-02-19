@@ -1,6 +1,8 @@
 import { createClient } from "contentful";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BlogItem } from "../types";
+import { BLOCKS } from "@contentful/rich-text-types";
+import Image from "next/image";
 
 const client = createClient({
   space: process.env.SPACE_ID!,
@@ -42,11 +44,77 @@ export default async function BlogPage({ params }: BlogPageProps) {
  const article = await fetchBlogPost(slug);
  const { title, date, content } = article.fields;
 
+ const renderOptions = {
+    renderNode: {
+      [BLOCKS.EMBEDDED_ASSET]: (node: any) => {
+        const asset = node?.data?.target
+        const fields = asset?.fields
+
+        if (!fields) return null
+
+        const file = fields.file
+        const title = fields.title ?? "Embedded asset"
+
+        // file.url can be like "//images.ctfassets.net/..."
+        const src = file?.url
+        const width = file?.details?.image?.width
+        const height = file?.details?.image?.height
+
+        if (!src) return null
+
+        const normalizedSrc = src.startsWith("//") ? `https:${src}` : src
+
+        // If it's an image, use Next Image; otherwise show a link
+        const contentType = file?.contentType ?? ""
+        const isImage = contentType.startsWith("image/")
+
+        if (!isImage) {
+          return (
+            <p>
+              <a href={normalizedSrc} target="_blank" rel="noreferrer">
+                {title}
+              </a>
+            </p>
+          )
+        }
+
+        // width/height are recommended for next/image
+        if (!width || !height) {
+          return (
+            <img
+              src={normalizedSrc}
+              alt={title}
+              style={{ maxWidth: "100%", height: "auto" }}
+            />
+          )
+        }
+
+        return (
+          <figure className="my-6">
+            <Image
+              src={normalizedSrc}
+              alt={title}
+              width={width}
+              height={height}
+              className="rounded-lg"
+            />
+            {fields.description ? (
+              <figcaption className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+                {fields.description}
+              </figcaption>
+            ) : null}
+          </figure>
+        )
+      },
+    },
+  }
+
  return (
-   <main className="min-h-screen p-24 flex justify-center">
+   <main className="min-h-screen flex justify-left">
      <div className="max-w-2xl">
-       <h1 className="font-extrabold text-3xl mb-2">{title}</h1>
-       <p className="mb-6 text-slate-400 ">
+       <h1 className="title font-semibold text-2xl tracking-tighter">{title}</h1>
+        <div className="flex justify-between items-center mt-2 mb-8 text-sm">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Posted on{" "}
           {new Date(date).toLocaleDateString("en-US", {
             year: "numeric",
@@ -54,9 +122,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
             day: "numeric",
           })}
         </p>
-        <div className="[&>p]:mb-8 [&>h2]:font-extrabold">
-          { documentToReactComponents(content) }
         </div>
+        <article className="prose dark:prose-invert">
+          { documentToReactComponents(content as any, renderOptions) }
+        </article>
      </div>
    </main>
  );

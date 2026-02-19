@@ -1,17 +1,40 @@
-import { getBlogPosts } from '@/app/blog/utils'
+import { createClient } from "contentful"
 
-export const baseUrl = 'https://portfolio-blog-starter.vercel.app'
+export const baseUrl = "https://pancakeiscute.com"
+
+const client = createClient({
+  space: process.env.SPACE_ID!,
+  accessToken: process.env.ACCESS_TOKEN!,
+})
 
 export default async function sitemap() {
-  let blogs = getBlogPosts().map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.metadata.publishedAt,
-  }))
+  const entries = await client.getEntries({
+    content_type: "blogPost",
+    select: ["fields.slug", "fields.date"] as any,
+    limit: 1000,
+  })
 
-  let routes = ['', '/blog'].map((route) => ({
+  const blogs = (entries.items as any[])
+    .map((item) => {
+      const slug = item?.fields?.slug as string | undefined
+      const date = item?.fields?.date as string | undefined
+
+      if (!slug || !date) return null
+
+      return {
+        url: `${baseUrl}/blog/${slug}`,
+        lastModified: new Date(date).toISOString(),
+      }
+    })
+    .filter(Boolean) as { url: string; lastModified: string }[]
+
+  const today = new Date().toISOString()
+
+  const routes = ["", "/blog", "/about"].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date().toISOString().split('T')[0],
+    lastModified: today,
   }))
 
   return [...routes, ...blogs]
 }
+
