@@ -1,17 +1,32 @@
 /* page.tsx */
+import { unstable_cache } from "next/cache";
 import Link from "next/link";
 import { BlogQueryResult } from "./types";
 import { createClient } from "contentful";
+
+export const revalidate = 300; // Revalidate every 5 minutes
 
 const client = createClient({
   space: process.env.SPACE_ID!,
   accessToken: process.env.ACCESS_TOKEN!,
 });
 
-const getBlogEntries = async (): Promise<BlogQueryResult> => {
-  const entries = await client.getEntries({ content_type: "blogPost" });
-  return entries as unknown as BlogQueryResult;
-};
+const getBlogEntries = unstable_cache(
+  async (): Promise<BlogQueryResult> => {
+    const entries = await client.getEntries({
+      content_type: "blogPost",
+      order: ["-fields.date"],
+
+      // optional: reduce payload (see #3)
+      // select: ["fields.slug", "fields.title", "fields.date"],
+    })
+
+    return entries as unknown as BlogQueryResult
+  },
+  ["blog-entries"], // cache key
+  { revalidate: 300 }
+)
+
 
 export const metadata = {
   title: 'Blog',
