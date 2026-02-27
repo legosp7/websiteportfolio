@@ -21,11 +21,11 @@ const skills = [
     },
     {
         name: "C",
-        image: "/skills/c.svg",
+        image: "/skills/C.svg",
     },
     {
-        name: "PostGreSQL",
-        image: "/skills/PostgresSQL.svg",
+        name: "PostgreSQL",
+        image: "/skills/PostgreSQL.svg",
     },
     {
         name: "Typescript",
