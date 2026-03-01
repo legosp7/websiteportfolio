@@ -12,15 +12,15 @@ import { ThemeProvider } from './components/theme-provider'
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Next.js Portfolio Starter',
-    template: '%s | Next.js Portfolio Starter',
+    default: 'The Bookshelf',
+    template: '%s | The Bookshelf',
   },
-  description: 'This is my portfolio.',
+  description: 'Stephen Pan portfolio.',
   openGraph: {
-    title: 'My Portfolio',
-    description: 'This is my portfolio.',
+    title: 'The Bookshelf',
+    description: 'Stephen Pan portfolio.',
     url: baseUrl,
-    siteName: 'My Portfolio',
+    siteName: 'The Bookshelf',
     locale: 'en_US',
     type: 'website',
   },
@@ -51,7 +51,7 @@ export default function RootLayout({
       
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-        <div className="max-w-xl mx-4 lg:mx-auto">
+        <div className="max-w-2xl mx-4 lg:mx-auto">
         <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
           <Navbar />
           {children}
