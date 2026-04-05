@@ -50,16 +50,6 @@ export function Navbar() {
                                 </Link>
                               </NavigationMenuLink>
                             </li>
-                            <li>
-                              <NavigationMenuLink asChild>
-                                <Link
-                                  href="/about/job_hunt"
-                                  className="block rounded-md px-3 py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
-                                >
-                                  Job Hunt
-                                </Link>
-                              </NavigationMenuLink>
-                            </li>
                             
                           </ul>
                         </NavigationMenuContent>
